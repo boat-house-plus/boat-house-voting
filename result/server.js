@@ -24,9 +24,9 @@ io.sockets.on('connection', function (socket) {
 async.retry(
   {times: 1000, interval: 1000},
   function(callback) {
-    pg.connect('postgres://postgres@db/postgres', function(err, client, done) {
+    pg.connect('postgres://postgres@boat-house_db/postgres', function(err, client, done) {
       if (err) {
-        console.error("Waiting for db");
+        console.error("Waiting for boat-house_db");
       }
       callback(err, client);
     });
@@ -35,7 +35,7 @@ async.retry(
     if (err) {
       return console.err("Giving up");
     }
-    console.log("Connected to db");
+    console.log("Connected to boat-house_db");
     getVotes(client);
   }
 );

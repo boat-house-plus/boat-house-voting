@@ -16,8 +16,8 @@ namespace Worker
         {
             try
             {
-                var pgsql = OpenDbConnection("Server=db;Username=postgres;");
-                var redisConn = OpenRedisConnection("redis");
+                var pgsql = OpenDbConnection("Server=boat-house_db;Username=postgres;");
+                var redisConn = OpenRedisConnection("boat-house_redis");
                 var redis = redisConn.GetDatabase();
 
                 // Keep alive is not implemented in Npgsql yet. This workaround was recommended:
@@ -31,7 +31,7 @@ namespace Worker
                     // Reconnect redis if down
                     if (redisConn == null || !redisConn.IsConnected) {
                         Console.WriteLine("Reconnecting Redis");
-                        redis = OpenRedisConnection("redis").GetDatabase();
+                        redis = OpenRedisConnection("boat-house_redis").GetDatabase();
                     }
                     string json = redis.ListLeftPopAsync("votes").Result;
                     if (json != null)
@@ -42,7 +42,7 @@ namespace Worker
                         if (!pgsql.State.Equals(System.Data.ConnectionState.Open))
                         {
                             Console.WriteLine("Reconnecting DB");
-                            pgsql = OpenDbConnection("Server=db;Username=postgres;");
+                            pgsql = OpenDbConnection("Server=boat-house_db;Username=postgres;");
                         }
                         else
                         { // Normal +1 vote requested
@@ -76,17 +76,17 @@ namespace Worker
                 }
                 catch (SocketException)
                 {
-                    Console.Error.WriteLine("Waiting for db");
+                    Console.Error.WriteLine("Waiting for boat-house_db");
                     Thread.Sleep(1000);
                 }
                 catch (DbException)
                 {
-                    Console.Error.WriteLine("Waiting for db");
+                    Console.Error.WriteLine("Waiting for boat-house_db");
                     Thread.Sleep(1000);
                 }
             }
 
-            Console.Error.WriteLine("Connected to db");
+            Console.Error.WriteLine("Connected to boat-house_db");
 
             var command = connection.CreateCommand();
             command.CommandText = @"CREATE TABLE IF NOT EXISTS votes (
