@@ -4,6 +4,8 @@ services:
   vote:
     build: ./vote
     command: python app.py
+    image: boat-house-vote:latest
+    container_name: boat-house_vote
     volumes:
      - ./vote:/app
     ports:
@@ -14,6 +16,8 @@ services:
   result:
     build: ./result
     command: node --inspect server.js
+    image: boat-house-result:latest
+    container_name: boat-house_result
     volumes:
       - ./result:/app
     ports:
@@ -24,6 +28,8 @@ services:
 
   worker:
     build: ./worker
+    image: boat-house-worker:latest
+    container_name: boat-house_worker
     networks:
       - front-tier
       - back-tier
